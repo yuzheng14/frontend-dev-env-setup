@@ -212,13 +212,14 @@ install_pkg "wget"
 
 if ! curl -fssL --connect-timeout 10 https://github.com &>/dev/null
 then
+  warn "当前无法访问 github，将尝试使用国内镜像安装 oh-my-zsh 和 nvm"
   OH_MY_ZSH_REPO="https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh"
   NVM_REPO="https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh"
 fi
 
 arrow 安装 zsh "&&" oh-my-zsh
 install_pkg "zsh"
-execute echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"
+execute echo -e "y\n" | sh -c "$(curl --connect-timeout 10 -fsSL ${OH_MY_ZSH_REPO})"
 execute_sudo usermod -s /bin/zsh ${USER}
 
 arrow 安装 nvm "&&" node
