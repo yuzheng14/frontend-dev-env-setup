@@ -182,11 +182,7 @@ execute_sudo "apt" "update"
 
 arrow 配置中文
 USER_SHELL_ENV_FILE="${HOME}/.profile"
-if [[ "$(have_tool language-pack-zh-hans)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果为安装中文语言包则安装中文语言包
-  execute_sudo apt install -y language-pack-zh-hans
-fi
+install_pkg "language-pack-zh-hans"
 if ! locale -a | grep "zh_CN.utf8" &>/dev/null
 then
   # 如果没有生成 zh_CN.utf8 的语言包
@@ -200,11 +196,7 @@ then
 fi
 
 arrow 安装并配置 git
-if [[ "$(have_tool git)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果没有安装 git 的话安装 git
-  execute_sudo apt install -y git
-fi
+install_pkg "git"
 execute git config --global alias.cam "commit -a -m"
 execute git config --global alias.cm "commit -m"
 execute git config --global alias.pure "pull --rebase"
@@ -213,16 +205,8 @@ execute git config --global alias.lg1 "log --graph --pretty=format:'%Cred%h%Cres
 execute git config --global credential.helper store
 
 arrow 安装 curl wget 并决定地址
-if [[ "$(have_tool curl)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果未安装 curl 则安装 curl
-  execute_sudo apt install -y curl
-fi
-if [[ "$(have_tool wget)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果未安装 wget 则安装 wget
-  execute_sudo apt install -y wget
-fi
+install_pkg "curl"
+install_pkg "wget"
 
 if ! curl -fssL --connect-timeout 10 https://github.com &>/dev/null
 then
@@ -231,11 +215,7 @@ then
 fi
 
 arrow 安装 zsh "&&" oh-my-zsh
-if [[ "$(have_tool zsh)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果未安装 zsh 则安装 zsh
-  execute_sudo apt install -y zsh
-fi
+install_pkg "zsh"
 execute echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"
 execute_sudo usermod -s /bin/zsh ${USER}
 
@@ -277,18 +257,10 @@ npm install -g nrm --registry=https://registry.npmmirror.com/
 nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
-if [[ "$(have_tool python2)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果未安装 python2 则安装 python2
-  execute_sudo apt install -y python2
-fi
+install_pkg "python2"
 execute_sudo apt install -y python2
 execute_sudo ln-s /usr/bin/python2.7 /usr/bin/python
 
 arrow 安装其他常用软件
-if [[ "$(have_tool vim)" == "${DONT_HAVE_TOOL}" ]]
-then
-  # 如果未安装 vim 则安装 vim
-  execute_sudo apt install -y vim
-fi
+install_pkg "vim"
 execute npm install -g yarn pnpm
