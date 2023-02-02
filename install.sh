@@ -103,6 +103,18 @@ execute_sudo() {
   fi
 }
 
+change_apt_source() {
+  if [[ "${UNAME_MACHINE}" == "${AMD64}" ]]
+  then
+    echo 替换 x86_64/amd64 镜像源
+    execute_sudo sed -i "s@http://.*archive.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+    execute_sudo sed -i "s@http://.*security.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+  else
+    echo 替换 arm64 镜像源
+    execute_sudo sed -i "s@http://ports.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+  fi
+}
+
 unset HAVE_SUDO_ACCESS
 
 have_sudo_access
@@ -113,23 +125,28 @@ then
 fi
 
 arrow 替换 apt 源
-if [[ "${UNAME_MACHINE}" == "${AMD64}" ]]
+if dpkg -l "ca-certificates" | grep "ca-certificates" &>/dev/null
 then
-  echo 替换 x86_64/amd64 镜像源
-  execute_sudo sed -i "s@http://.*archive.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
-  execute_sudo sed -i "s@http://.*security.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+  # 如果已经装上了 ca-certificates
+  echo "当前已安装 ca-certificates"
+  if ! grep https://mirrors.tuna.tsinghua.edu.cn /etc/apt/sources.list &>/dev/null
+  then
+    # 如果 sources.list 中没有替换源
+    change_apt_source "https"
+  fi
 else
-  echo 替换 arm64 镜像源
-  execute_sudo sed -i "s@http://ports.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
+  # 如果没装 ca-certifacates
+  echo "当前未安装 ca-certificates"
+  # 修改为 http 的源
+  change_apt_source "http"
+  # 更新软件包列表
+  execute_sudo "apt" "update"
+  # 安装 ca-certificates
+  execute_sudo "apt" "install" "-y" "ca-certifacates"
+  # 替换为 https 源
+  execute_sudo "sed" "-i" "s@http@https@g" "/etc/apt/sources.list"
 fi
-
-arrow 安装系统证书相关软件
-execute_sudo apt update
-execute_sudo apt install -y ca-certificates
-
-arrow apt 替换为 https 镜像源
-execute_sudo sed -i "s@http@https@g" /etc/apt/sources.list
-execute_sudo apt update
+execute_sudo "apt" "update"
 
 arrow 配置中文
 USER_SHELL_ENV_FILE="~/.profile"
