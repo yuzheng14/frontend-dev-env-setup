@@ -145,7 +145,7 @@ install_pkg() {
   then
     execute_sudo "apt" "install" "-y" "$1"
   else
-    echo "${tty_green}  ==>${tty_default} 已安装 $1"
+    echo -e "${tty_green}  ==>${tty_default} 已安装 $1"
   fi
 }
 
