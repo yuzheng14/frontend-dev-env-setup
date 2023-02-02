@@ -120,6 +120,21 @@ change_apt_source() {
   fi
 }
 
+HAVE_TOOL=1
+DONT_HAVE_TOOL=0
+
+# 是否安装了某个包
+# 已安装则返回 1
+# 未安装则返回 0
+have_tool() {
+  if dpkg -l|grep "$1"
+  then
+    return "${HAVE_TOOL}"
+  else
+    return "${DONT_HAVE_TOOL}"
+  fi
+}
+
 unset HAVE_SUDO_ACCESS
 
 have_sudo_access
