@@ -108,7 +108,7 @@ then
 fi
 
 arrow 替换 apt 源
-if [[ "${UNAME_MACHINE}" == "X86_84" ]]
+if [[ "${UNAME_MACHINE}" == "x86_64" ]]
 then
   echo 替换 x86_64/amd64 镜像源
   execute_sudo sed -i "s@http://.*archive.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
