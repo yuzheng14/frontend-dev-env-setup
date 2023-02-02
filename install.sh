@@ -14,6 +14,10 @@ tty_plain="\033[0m"
 readonly AMD64="x86_64"
 readonly ARM64="aarch64"
 
+# 安装 oh-my-zsh 和 nvm 的安装脚本地址
+OH_MY_ZSH_REPO=https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
+NVM_REPO=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+
 # 输出警告信息
 warn() {
   echo -e "${tty_yellow}警告：$1${tty_plain}"
@@ -145,7 +149,7 @@ then
 fi
 
 arrow 替换 apt 源
-if dpkg -l "ca-certificates" | grep "ca-certificates" &>/dev/null
+if [[ "$(have_tool ca-certificates)" == "${HAVE_TOOL}" ]]
 then
   # 如果已经装上了 ca-certificates
   echo "当前已安装 ca-certificates"
@@ -170,13 +174,29 @@ execute_sudo "apt" "update"
 
 arrow 配置中文
 USER_SHELL_ENV_FILE="${HOME}/.profile"
-execute_sudo apt install -y language-pack-zh-hans
-execute_sudo locale-gen zh_CN.UTF-8
-execute_sudo echo -e "\n export LANG=zh_CN.UTF-8" >> "${USER_SHELL_ENV_FILE}"
-execute source "${USER_SHELL_ENV_FILE}"
+if [[ "$(have_tool language-pack-zh-hans)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果为安装中文语言包则安装中文语言包
+  execute_sudo apt install -y language-pack-zh-hans
+fi
+if ! locale -a | grep "zh_CN.utf8" &>/dev/null
+then
+  # 如果没有生成 zh_CN.utf8 的语言包
+  execute_sudo locale-gen zh_CN.UTF-8
+fi
+if ! grep "export LANG=zh_CN.UTF-8" "${USER_SHELL_ENV_FILE}"&>/dev/null
+then
+  # 如果 ~/.profile 中没有设定语言则设定语言
+  execute_sudo echo -e "\n export LANG=zh_CN.UTF-8" >> "${USER_SHELL_ENV_FILE}"
+  execute source "${USER_SHELL_ENV_FILE}"
+fi
 
 arrow 安装并配置 git
-execute_sudo apt install -y git
+if [[ "$(have_tool git)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果没有安装 git 的话安装 git
+  execute_sudo apt install -y git
+fi
 execute git config --global alias.cam "commit -a -m"
 execute git config --global alias.cm "commit -m"
 execute git config --global alias.pure "pull --rebase"
@@ -185,18 +205,29 @@ execute git config --global alias.lg1 "log --graph --pretty=format:'%Cred%h%Cres
 execute git config --global credential.helper store
 
 arrow 安装 curl wget 并决定地址
-execute_sudo apt install -y curl wget
-if curl -fssL https://github.com &>/dev/null
+if [[ "$(have_tool curl)" == "${DONT_HAVE_TOOL}" ]]
 then
-  OH_MY_ZSH_REPO=https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-  NVM_REPO=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
-else
+  # 如果未安装 curl 则安装 curl
+  execute_sudo apt install -y curl
+fi
+if [[ "$(have_tool wget)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果未安装 wget 则安装 wget
+  execute_sudo apt install -y wget
+fi
+
+if ! curl -fssL https://github.com &>/dev/null
+then
   OH_MY_ZSH_REPO=https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh
   NVM_REPO=https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh
 fi
 
 arrow 安装 zsh "&&" oh-my-zsh
-execute_sudo apt install -y zsh
+if [[ "$(have_tool zsh)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果未安装 zsh 则安装 zsh
+  execute_sudo apt install -y zsh
+fi
 execute echo -e "y\n" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 execute_sudo usermod -s /bin/zsh ${USER}
 
@@ -238,9 +269,18 @@ npm install -g nrm --registry=https://registry.npmmirror.com/
 nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
+if [[ "$(have_tool python2)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果未安装 python2 则安装 python2
+  execute_sudo apt install -y python2
+fi
 execute_sudo apt install -y python2
 execute_sudo ln-s /usr/bin/python2.7 /usr/bin/python
 
 arrow 安装其他常用软件
-execute_sudo apt install -y vim
+if [[ "$(have_tool vim)" == "${DONT_HAVE_TOOL}" ]]
+then
+  # 如果未安装 vim 则安装 vim
+  execute_sudo apt install -y vim
+fi
 execute npm install -g yarn pnpm
