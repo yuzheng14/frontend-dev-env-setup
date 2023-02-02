@@ -151,7 +151,7 @@ execute_sudo "apt" "update"
 arrow 配置中文
 USER_SHELL_ENV_FILE="~/.profile"
 execute_sudo apt install -y language-pack-zh-hans
-execute locale-gen zh_CN.UTF-8
+execute_sudo locale-gen zh_CN.UTF-8
 execute_sudo echo -e "\n export LANG=zh_CN.UTF-8" >> USER_SHELL_ENV_FILE
 execute source USER_SHELL_ENV_FILE
 
