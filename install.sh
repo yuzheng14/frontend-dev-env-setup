@@ -31,11 +31,11 @@ abort() {
 
 # 箭头提示过程
 arrow() {
-  echo -e "${tty_blue}==> ${tty_default}$@${tty_plain}"
+  echo -e "${tty_blue}==> ${tty_default}$*${tty_plain}"
 }
 
 deep_arrow() {
-  echo -e "${tty_pink}  ==> ${tty_default}$@${tty_plain}"
+  echo -e "${tty_pink}  ==> ${tty_default}$*${tty_plain}"
 }
 
 # 检测是否具有 sudo 权限
@@ -75,7 +75,7 @@ then
 fi
 
 # 检测是否为 ubuntu 系统
-if [[ -z $(cat /etc/os-release | grep ID | grep -i ubuntu) ]]
+if ! grep ID= /etc/os-release | grep -qi ubuntu &>/dev/null
 then
   abort "当前系统非 Ubuntu，请使用 Ubuntu 运行此安装脚本"
 fi
