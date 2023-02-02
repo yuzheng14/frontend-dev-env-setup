@@ -228,11 +228,11 @@ then
   # 如果未安装 zsh 则安装 zsh
   execute_sudo apt install -y zsh
 fi
-execute echo -e "y\n" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+execute echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"
 execute_sudo usermod -s /bin/zsh ${USER}
 
 arrow 安装 nvm "&&" node
-execute curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
+execute curl -o- "${NVM_REPO}" | bash
 execute cat >> ~/.zshrc <<EOF
 export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
