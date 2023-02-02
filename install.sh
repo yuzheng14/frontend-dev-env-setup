@@ -183,7 +183,7 @@ fi
 arrow 安装 zsh "&&" oh-my-zsh
 execute_sudo apt install -y zsh
 execute echo -e "y\n" | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-execute usermod -s /bin/zsh ${USER}
+execute_sudo usermod -s /bin/zsh ${USER}
 
 arrow 安装 nvm "&&" node
 execute curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash
