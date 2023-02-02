@@ -91,7 +91,7 @@ fi
 
 # 执行指令
 execute() {
-  deep_arrow "$@"
+  deep_arrow "执行指令" "$@"
   if ! "$@"
   then
     abort "执行指令 $@ 失败"
@@ -102,9 +102,9 @@ execute() {
 execute_sudo() {
   if have_sudo_access
   then
-    execute sudo $@
+    execute "sudo" "$@"
   else
-    execute $@
+    execute "$@"
   fi
 }
 
