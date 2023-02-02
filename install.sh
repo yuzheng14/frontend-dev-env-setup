@@ -12,7 +12,7 @@ tty_plain="\033[0m"
 
 # 输出警告信息
 warn() {
-  echo ${tty_red}警告：$1${tty_plain}
+  echo ${tty_yellow}警告：$1${tty_plain}
 }
 
 # 输出错误并退出
