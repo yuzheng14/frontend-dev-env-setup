@@ -178,6 +178,7 @@ then
 else
   OH_MY_ZSH_REPO=https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh
   NVM_REPO=https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh
+fi
 
 arrow 安装 zsh "&&" oh-my-zsh
 execute_sudo apt install -y zsh
