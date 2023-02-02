@@ -131,7 +131,7 @@ DONT_HAVE_TOOL=0
 # 已安装则返回 1
 # 未安装则返回 0
 have_tool() {
-  if dpkg -l|grep "$1"
+  if dpkg -l|grep "$1" &>/dev/tool
   then
     return "${HAVE_TOOL}"
   else
