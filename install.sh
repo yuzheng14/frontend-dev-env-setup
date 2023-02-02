@@ -86,6 +86,7 @@ execute() {
   if ! "$@"
   then
     abort "执行指令 $@ 失败"
+  fi
 }
 
 # 执行 sudo 指令
