@@ -58,7 +58,7 @@ have_sudo_access() {
 execute_sudo() {
   if have_sudo_access
   then
-    sudo "$@"
+    execute "sudo" "$@"
   else
     warn "sudo 权限失活？"
   fi
@@ -91,6 +91,7 @@ fi
 
 # 执行指令
 execute() {
+  deep_arrow "$@"
   if ! "$@"
   then
     abort "执行指令 $@ 失败"
