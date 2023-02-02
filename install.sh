@@ -57,7 +57,7 @@ execute_sudo() {
 }
 
 # 检测是否为 sudo 执行
-if [ -z "${BASH_VERSION}"]
+if [ -z "${BASH_VERSION}" ]
 then
   abort "当前 shell 程序不是 bash，请使用 bash 执行"
 fi
