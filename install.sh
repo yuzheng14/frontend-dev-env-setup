@@ -16,12 +16,12 @@ readonly ARM64="aarch64"
 
 # 输出警告信息
 warn() {
-  echo -e ${tty_yellow}警告：$1${tty_plain}
+  echo -e "${tty_yellow}警告：$1${tty_plain}"
 }
 
 # 输出错误并退出
 abort() {
-  echo -e ${tty_red}错误：$1${tty_plain}
+  echo -e "${tty_red}错误：$1${tty_plain}"
   exit 1
 }
 
