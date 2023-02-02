@@ -10,6 +10,10 @@ tty_gray="\033[1;37m"
 tty_default="\033[1;39m"
 tty_plain="\033[0m"
 
+# 定义 x86_64 和 arm64 系统架构的常量
+readonly AMD64="x86_64"
+readonly ARM64="aarch64"
+
 # 输出警告信息
 warn() {
   echo ${tty_yellow}警告：$1${tty_plain}
@@ -70,7 +74,7 @@ fi
 
 # 检测系统架构
 UNAME_MACHINE=$(uname -m)
-if [[ "${UNAME_MACHINE}" != 'x86_64' ]] && [[ "${UNAME_MACHINE}" != 'aarch64' ]]
+if [[ "${UNAME_MACHINE}" != "${AMD64}" ]] && [[ "${UNAME_MACHINE}" != "${ARM64}" ]]
 then
   abort "此脚本仅支持 amd64/x86_64 和 arm 64 架构系统"
 fi
@@ -109,7 +113,7 @@ then
 fi
 
 arrow 替换 apt 源
-if [[ "${UNAME_MACHINE}" == "x86_64" ]]
+if [[ "${UNAME_MACHINE}" == "${AMD64}" ]]
 then
   echo 替换 x86_64/amd64 镜像源
   execute_sudo sed -i "s@http://.*archive.ubuntu.com@http://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
