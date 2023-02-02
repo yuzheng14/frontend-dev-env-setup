@@ -167,8 +167,6 @@ execute git config --global alias.cm "commit -m"
 execute git config --global alias.pure "pull --rebase"
 execute git config --global alias.lg "log --graph --decorate"
 execute git config --global alias.lg1 "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr)%Creset' --abbrev-commit --date=relative"
-execute git config --global user.name ${git_username}
-execute git config --global user.email ${git_email}
 execute git config --global credential.helper store
 
 arrow 安装 curl wget 并决定地址
