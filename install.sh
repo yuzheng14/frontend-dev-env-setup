@@ -30,6 +30,10 @@ arrow() {
   echo "${tty_blue}==> ${tty_default}$@${tty_plain}"
 }
 
+deep_arrow() {
+  echo "${tty_pink}  ==> ${tty_default}$@${tty_plain}"
+}
+
 # 检测是否具有 sudo 权限
 have_sudo_access() {
   if [[ ! -x /usr/bin/sudo ]]
