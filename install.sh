@@ -15,8 +15,8 @@ readonly AMD64="x86_64"
 readonly ARM64="aarch64"
 
 # 安装 oh-my-zsh 和 nvm 的安装脚本地址
-OH_MY_ZSH_REPO=https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh
-NVM_REPO=https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh
+OH_MY_ZSH_REPO="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
+NVM_REPO="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh"
 
 # 输出警告信息
 warn() {
@@ -216,10 +216,10 @@ then
   execute_sudo apt install -y wget
 fi
 
-if ! curl -fssL https://github.com &>/dev/null
+if ! curl -fssL --connect-timeout 10 https://github.com &>/dev/null
 then
-  OH_MY_ZSH_REPO=https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh
-  NVM_REPO=https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh
+  OH_MY_ZSH_REPO="https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh"
+  NVM_REPO="https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh"
 fi
 
 arrow 安装 zsh "&&" oh-my-zsh
