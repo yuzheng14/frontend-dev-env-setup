@@ -139,6 +139,14 @@ have_tool() {
   fi
 }
 
+# 如果包不存在则安装包
+install_pkg() {
+  if ! dpkg -l|grep "$1" &>/dev/tool
+  then
+    execute_sudo "apt" "install" "-y" "$1"
+  fi
+}
+
 unset HAVE_SUDO_ACCESS
 
 have_sudo_access
