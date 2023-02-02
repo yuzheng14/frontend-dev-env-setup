@@ -166,7 +166,7 @@ else
   # 更新软件包列表
   execute_sudo "apt" "update"
   # 安装 ca-certificates
-  execute_sudo "apt" "install" "-y" "ca-certifacates"
+  execute_sudo "apt" "install" "-y" "ca-certificates"
   # 替换为 https 源
   execute_sudo "sed" "-i" "s@http@https@g" "/etc/apt/sources.list"
 fi
