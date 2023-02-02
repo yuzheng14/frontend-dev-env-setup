@@ -16,22 +16,22 @@ readonly ARM64="aarch64"
 
 # 输出警告信息
 warn() {
-  echo ${tty_yellow}警告：$1${tty_plain}
+  echo -e ${tty_yellow}警告：$1${tty_plain}
 }
 
 # 输出错误并退出
 abort() {
-  echo ${tty_red}错误：$1${tty_plain}
+  echo -e ${tty_red}错误：$1${tty_plain}
   exit 1
 }
 
 # 箭头提示过程
 arrow() {
-  echo "${tty_blue}==> ${tty_default}$@${tty_plain}"
+  echo -e "${tty_blue}==> ${tty_default}$@${tty_plain}"
 }
 
 deep_arrow() {
-  echo "${tty_pink}  ==> ${tty_default}$@${tty_plain}"
+  echo -e "${tty_pink}  ==> ${tty_default}$@${tty_plain}"
 }
 
 # 检测是否具有 sudo 权限
@@ -111,11 +111,11 @@ execute_sudo() {
 change_apt_source() {
   if [[ "${UNAME_MACHINE}" == "${AMD64}" ]]
   then
-    echo 替换 x86_64/amd64 镜像源
+    echo "替换 x86_64/amd64 镜像源"
     execute_sudo sed -i "s@http://.*archive.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
     execute_sudo sed -i "s@http://.*security.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
   else
-    echo 替换 arm64 镜像源
+    echo "替换 arm64 镜像源"
     execute_sudo sed -i "s@http://ports.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
   fi
 }
