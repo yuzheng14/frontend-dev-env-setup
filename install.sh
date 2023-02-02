@@ -133,15 +133,15 @@ DONT_HAVE_TOOL=0
 have_tool() {
   if dpkg -l|grep "$1" &>/dev/tool
   then
-    return "${HAVE_TOOL}"
+    echo "${HAVE_TOOL}"
   else
-    return "${DONT_HAVE_TOOL}"
+    echo "${DONT_HAVE_TOOL}"
   fi
 }
 
 # 如果包不存在则安装包
 install_pkg() {
-  if ! dpkg -l|grep "$1" &>/dev/tool
+  if [[ "$(have_tool "$1")" == "${DONT_HAVE_TOOL}" ]]
   then
     execute_sudo "apt" "install" "-y" "$1"
   fi
