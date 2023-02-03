@@ -172,8 +172,9 @@ install_pkg() {
   if [[ "$(have_tool "$1")" == "${DONT_HAVE_TOOL}" ]]
   then
     execute_sudo "apt" "install" "-y" "$1"
+    success_arrow "安装 $1 成功"
   else
-    echo -e "${tty_green}  ==>${tty_default} 已安装 $1"
+    success_arrow "已安装过 $1"
   fi
 }
 
