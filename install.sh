@@ -222,7 +222,7 @@ fi
 if ! grep "export LANG=zh_CN.UTF-8" "${USER_SHELL_ENV_FILE}"&>/dev/null
 then
   # 如果 ~/.profile 中没有设定语言则设定语言
-  execute_sudo echo -e "\n export LANG=zh_CN.UTF-8" >> "${USER_SHELL_ENV_FILE}"
+  execute_sudo 'echo -e "\n export LANG=zh_CN.UTF-8" >> "${USER_SHELL_ENV_FILE}"'
   execute source "${USER_SHELL_ENV_FILE}"
 fi
 
@@ -268,7 +268,7 @@ else
 fi
 # 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
-execute zsh source "${ZSH_RC}"
+# execute zsh source "${ZSH_RC}"
 execute nvm install 16
 # 如果没有把 nvm 的钩子 写入 zshrc 则写入
 if ! grep -q "${NVMRC_HOOK}" "${ZSH_RC}"
@@ -277,7 +277,7 @@ then
 else
   success_arrow "nvm 钩子已写入 zsh rc"
 fi
-execute zsh source "${ZSH_RC}"
+# execute zsh source "${ZSH_RC}"
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
 if ! nrm -v &>/dev/null
@@ -308,3 +308,5 @@ then
 else
   success_arrow "已经安装过 pnpm"
 fi
+
+execute zsh && source "${ZSH_RC}"
