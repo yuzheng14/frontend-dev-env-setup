@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 tty_black="\033[1;30m"
 tty_red="\033[1;31m"
 tty_green="\033[1;32m"
@@ -159,7 +159,7 @@ DONT_HAVE_TOOL=0
 # 已安装则返回 1
 # 未安装则返回 0
 have_tool() {
-  if dpkg -l|grep "$1" &>/dev/null
+  if dpkg -l|grep " $1 " &>/dev/null
   then
     echo "${HAVE_TOOL}"
   else
@@ -258,6 +258,7 @@ if ! nvm -v &>/dev/null;
 then
   # 如果未安装 nvm 则安装 curl
   execute curl -o- "${NVM_REPO}" | bash
+  success_arrow "安装 nvm@$(nvm -v) 成功"
 else
   success_arrow "当前已安装 nvm@$(nvm -v)"
 fi
@@ -265,9 +266,12 @@ fi
 if ! grep -q "${NVM_ENV}" "${ZSH_RC}"
 then
   execute "echo" '"${NVM_ENV}"' ">>" "${ZSH_RC}"
+  success_arrow "写入 nvm 环境变量成功"
 else
   success_arrow "nvm 环境变量已写入 zsh rc"
 fi
+# 如果没有 nvm 指令则执行 nvm.sh 文件
+nvm -v &>/dev/null || . "${NVM_DIR}/nvm.sh"
 # 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
 # execute zsh source "${ZSH_RC}"
@@ -291,7 +295,7 @@ fi
 nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
-install_pkg "python2"
+install_pkg "python2.7"
 if [[ -s "/usr/bin/python" ]]
 then
   warn "已设置 python 软链，即将删除后重新设置"
