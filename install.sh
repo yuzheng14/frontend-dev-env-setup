@@ -1,4 +1,5 @@
 #!/bin/bash
+set -x
 tty_black="\033[1;30m"
 tty_red="\033[1;31m"
 tty_green="\033[1;32m"
@@ -95,15 +96,6 @@ have_sudo_access() {
   return "${HAVE_SUDO_ACCESS}"
 }
 
-execute_sudo() {
-  if have_sudo_access
-  then
-    execute "sudo" "$@"
-  else
-    warn "sudo 权限失活？"
-  fi
-}
-
 # 检测是否为 sudo 执行
 if [ -z "${BASH_VERSION}" ]
 then
@@ -132,7 +124,7 @@ fi
 # 执行指令
 execute() {
   deep_arrow "执行指令" "$*"
-  if ! "$*"
+  if ! eval "$*"
   then
     abort "执行指令 $*git 失败"
   fi
