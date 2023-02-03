@@ -258,6 +258,7 @@ if ! nvm -v &>/dev/null;
 then
   # 如果未安装 nvm 则安装 curl
   execute curl -o- "${NVM_REPO}" | bash
+  . "${NVM_DIR}/nvm.sh"
   success_arrow "安装 nvm@$(nvm -v) 成功"
 else
   success_arrow "当前已安装 nvm@$(nvm -v)"
@@ -270,8 +271,6 @@ then
 else
   success_arrow "nvm 环境变量已写入 zsh rc"
 fi
-# 如果没有 nvm 指令则执行 nvm.sh 文件
-nvm -v &>/dev/null || . "${NVM_DIR}/nvm.sh"
 # 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
 # execute zsh source "${ZSH_RC}"
@@ -320,4 +319,4 @@ else
   success_arrow "已经安装过 pnpm"
 fi
 
-execute 'zsh && source "${ZSH_RC}"'
+execute 'zsh && source "${ZSH_RC}" && source "${USER_SHELL_ENV_FILE}"'
