@@ -69,6 +69,10 @@ deep_arrow() {
   echo -e "${tty_pink}  ==> ${tty_default}$*${tty_plain}"
 }
 
+success_arrow() {
+  echo -e "${tty_green}  ==> ${tty_default}$*${tty_plain}"
+}
+
 # 检测是否具有 sudo 权限
 have_sudo_access() {
   if [[ ! -x /usr/bin/sudo ]]
@@ -259,12 +263,14 @@ then
   # 如果未安装 nvm 则安装 curl
   execute curl -o- "${NVM_REPO}" | bash
 else
-  deep_arrow "当前已安装 nvm@$(nvm -v)"
+  success_arrow "当前已安装 nvm@$(nvm -v)"
 fi
 # 如果没有把 nvm 的环境变量写入 .zshrc 则写入
 if ! grep -q "${NVM_ENV}" "${HOME}/.zshrc"
 then
   execute "cat" '"${NVM_ENV}"' ">>" "${HOME}/.zshrc"
+else
+  success_arrow "nvm 环境变量已写入 zsh rc"
 fi
 # 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
@@ -273,7 +279,9 @@ execute nvm install 16
 # 如果没有把 nvm 的钩子 写入 zshrc 则写入
 if ! grep -q "${NVMRC_HOOK}" "${HOME}/.zshrc"
 then
-  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc " 
+  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc" 
+else
+  success_arrow "nvm 钩子已写入 zsh rc"
 fi
 execute zsh source ~/.zshrc
 
