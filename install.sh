@@ -287,7 +287,12 @@ fi
 execute zsh source "${ZSH_RC}"
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
-npm install -g nrm --registry=https://registry.npmmirror.com/
+if ! nrm -v &>/dev/null
+then
+  npm install -g nrm --registry=https://registry.npmmirror.com/
+else 
+  success_arrow "已安装过 nrm"
+fi
 nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
