@@ -252,6 +252,8 @@ execute echo -e "y\n" | sh -c "$(curl --connect-timeout 10 -fsSL ${OH_MY_ZSH_REP
 execute_sudo usermod -s /bin/zsh ${USER}
 
 arrow 安装 nvm "&&" node
+export NVM_DIR="${HOME}/.nvm"
+[[ -s "${NVM_DIR}/nvm.sh" ]] && . "${NVM_DIR}/nvm.sh"
 if ! nvm -v &>/dev/null;
 then
   # 如果未安装 nvm 则安装 curl
@@ -309,4 +311,4 @@ else
   success_arrow "已经安装过 pnpm"
 fi
 
-execute zsh && source "${ZSH_RC}"
+execute 'zsh && source "${ZSH_RC}"'
