@@ -18,6 +18,37 @@ readonly ARM64="aarch64"
 OH_MY_ZSH_REPO="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 NVM_REPO="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh"
 
+# 多行字符串
+# 设置 nvm 的环境变量
+NVM_ENV="$(cat <<"EOF"
+export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+EOF
+)"
+NVMRC_HOOK="$(cat <<"EOF"
+# place this after nvm initialization!
+autoload -U add-zsh-hook
+load-nvmrc() {
+  local nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+EOF
+)"
+
 # 输出警告信息
 warn() {
   echo -e "${tty_yellow}警告：$1${tty_plain}"
@@ -223,37 +254,24 @@ execute echo -e "y\n" | sh -c "$(curl --connect-timeout 10 -fsSL ${OH_MY_ZSH_REP
 execute_sudo usermod -s /bin/zsh ${USER}
 
 arrow 安装 nvm "&&" node
-execute curl -o- "${NVM_REPO}" | bash
-execute cat >> ~/.zshrc <<EOF
-export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || printf %s "${XDG_CONFIG_HOME}/nvm")"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-EOF
+if ! nvm -v &>/dev/null;
+then
+  # 如果未安装 nvm 则安装 curl
+  execute curl -o- "${NVM_REPO}" | bash
+else
+  deep_arrow "当前已安装 nvm@$(nvm -v)"
+fi
+# 如果没有把 nvm 的环境变量写入 .zshrc 则写入
+if ! grep -q "${NVM_ENV}" "${HOME}/.zshrdc"
+then
+  execute "cat" '"${NVM_ENV}"' ">>" "${HOME}/.zshrc"
+fi
+# 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
-execute source ~/.zshrc
+execute zsh source ~/.zshrc
 execute nvm install 16
-execute cat >> ~/.zshrc <<EOF
-# place this after nvm initialization!
-autoload -U add-zsh-hook
-load-nvmrc() {
-  local nvmrc_path="\$(nvm_find_nvmrc)"
-
-  if [ -n "\$nvmrc_path" ]; then
-    local nvmrc_node_version=\$(nvm version "\$(cat "\${nvmrc_path}")")
-
-    if [ "\$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "\$nvmrc_node_version" != "\$(nvm version)" ]; then
-      nvm use
-    fi
-  elif [ -n "\$(PWD=\$OLDPWD nvm_find_nvmrc)" ] && [ "\$(nvm version)" != "\$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
-EOF
-execute source ~/.zshrc
+execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc " 
+execute zsh source ~/.zshrc
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
 npm install -g nrm --registry=https://registry.npmmirror.com/
