@@ -95,10 +95,10 @@ fi
 
 # 执行指令
 execute() {
-  deep_arrow "执行指令" "$@"
-  if ! "$@"
+  deep_arrow "执行指令" "$*"
+  if ! "$*"
   then
-    abort "执行指令 $@ 失败"
+    abort "执行指令 $*git 失败"
   fi
 }
 
