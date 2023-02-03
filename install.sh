@@ -262,7 +262,7 @@ fi
 # 如果没有把 nvm 的环境变量写入 .zshrc 则写入
 if ! grep -q "${NVM_ENV}" "${ZSH_RC}"
 then
-  execute "cat" '"${NVM_ENV}"' ">>" "${ZSH_RC}"
+  execute "echo" '"${NVM_ENV}"' ">>" "${ZSH_RC}"
 else
   success_arrow "nvm 环境变量已写入 zsh rc"
 fi
@@ -273,7 +273,7 @@ execute nvm install 16
 # 如果没有把 nvm 的钩子 写入 zshrc 则写入
 if ! grep -q "${NVMRC_HOOK}" "${ZSH_RC}"
 then
-  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${ZSH_RC}" 
+  execute "echo" '"${NVMRC_HOOK}"'  ">>" "${ZSH_RC}" 
 else
   success_arrow "nvm 钩子已写入 zsh rc"
 fi
