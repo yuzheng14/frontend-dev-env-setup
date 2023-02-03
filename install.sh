@@ -292,6 +292,11 @@ nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
 install_pkg "python2"
+if [[ -s "/usr/bin/python" ]]
+then
+  warn "已设置 python 软链，即将删除后重新设置"
+  execute_sudo 'rm -f /usr/bin/python'
+fi
 execute_sudo ln -s /usr/bin/python2.7 /usr/bin/python
 
 arrow 安装其他常用软件
