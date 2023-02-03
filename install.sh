@@ -301,4 +301,17 @@ execute_sudo ln -s /usr/bin/python2.7 /usr/bin/python
 
 arrow 安装其他常用软件
 install_pkg "vim"
-execute npm install -g yarn pnpm
+if ! npm list -g | grep -q yarn
+then
+  deep_arrow "安装 yarn"
+  execute "npm" "install" "-g" "yarn"
+else
+  success_arrow "已经安装过 yarn"
+fi
+if ! npm list -g | grep -q pnpm
+then
+  deep_arrow "安装 pnpm"
+  execute "npm" "install" "-g" "pnpm"
+else
+  success_arrow "已经安装过 pnpm"
+fi
