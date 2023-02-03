@@ -17,6 +17,7 @@ readonly ARM64="aarch64"
 # 安装 oh-my-zsh 和 nvm 的安装脚本地址
 OH_MY_ZSH_REPO="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 NVM_REPO="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh"
+ZSH_RC="${HOME}/.zshrc"
 
 # 多行字符串
 # 设置 nvm 的环境变量
@@ -266,24 +267,24 @@ else
   success_arrow "当前已安装 nvm@$(nvm -v)"
 fi
 # 如果没有把 nvm 的环境变量写入 .zshrc 则写入
-if ! grep -q "${NVM_ENV}" "${HOME}/.zshrc"
+if ! grep -q "${NVM_ENV}" "${ZSH_RC}"
 then
-  execute "cat" '"${NVM_ENV}"' ">>" "${HOME}/.zshrc"
+  execute "cat" '"${NVM_ENV}"' ">>" "${ZSH_RC}"
 else
   success_arrow "nvm 环境变量已写入 zsh rc"
 fi
 # 替换官方 node 源为淘宝源
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
-execute zsh source ~/.zshrc
+execute zsh source "${ZSH_RC}"
 execute nvm install 16
 # 如果没有把 nvm 的钩子 写入 zshrc 则写入
-if ! grep -q "${NVMRC_HOOK}" "${HOME}/.zshrc"
+if ! grep -q "${NVMRC_HOOK}" "${ZSH_RC}"
 then
-  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc" 
+  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${ZSH_RC}" 
 else
   success_arrow "nvm 钩子已写入 zsh rc"
 fi
-execute zsh source ~/.zshrc
+execute zsh source "${ZSH_RC}"
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
 npm install -g nrm --registry=https://registry.npmmirror.com/
