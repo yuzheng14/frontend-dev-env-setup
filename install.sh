@@ -283,8 +283,7 @@ nrm use taobao
 
 arrow 安装 python 2 以兼容 node-sass（请尽快迁移至 sass 或 sass-embeded 包）
 install_pkg "python2"
-execute_sudo apt install -y python2
-execute_sudo ln-s /usr/bin/python2.7 /usr/bin/python
+execute_sudo ln -s /usr/bin/python2.7 /usr/bin/python
 
 arrow 安装其他常用软件
 install_pkg "vim"
