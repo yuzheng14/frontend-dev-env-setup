@@ -262,7 +262,7 @@ else
   deep_arrow "当前已安装 nvm@$(nvm -v)"
 fi
 # 如果没有把 nvm 的环境变量写入 .zshrc 则写入
-if ! grep -q "${NVM_ENV}" "${HOME}/.zshrdc"
+if ! grep -q "${NVM_ENV}" "${HOME}/.zshrc"
 then
   execute "cat" '"${NVM_ENV}"' ">>" "${HOME}/.zshrc"
 fi
@@ -270,7 +270,11 @@ fi
 execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
 execute zsh source ~/.zshrc
 execute nvm install 16
-execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc " 
+# 如果没有把 nvm 的钩子 写入 zshrc 则写入
+if ! grep -q "${NVMRC_HOOK}" "${HOME}/.zshrc"
+then
+  execute "cat" '"${NVMRC_HOOK}"'  ">>" "${HOME}/.zshrc " 
+fi
 execute zsh source ~/.zshrc
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
