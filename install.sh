@@ -1,5 +1,8 @@
 #!/bin/bash
 # set -x
+
+# ======== 常量区 ========
+# tty 颜色常量
 tty_black="\033[1;30m"
 tty_red="\033[1;31m"
 tty_green="\033[1;32m"
@@ -18,6 +21,7 @@ readonly ARM64="aarch64"
 # 安装 oh-my-zsh 和 nvm 的安装脚本地址
 OH_MY_ZSH_REPO="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 NVM_REPO="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh"
+# zshrc 的路径
 ZSH_RC="${HOME}/.zshrc"
 
 # 多行字符串
@@ -27,6 +31,7 @@ export NVM_DIR="$([ -z "${XDG_CONFIG_HOME-}" ] && printf %s "${HOME}/.nvm" || pr
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
 EOF
 )"
+# nvm 钩子
 NVMRC_HOOK="$(cat <<"EOF"
 # place this after nvm initialization!
 autoload -U add-zsh-hook
@@ -50,7 +55,11 @@ add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 EOF
 )"
+# 是否有某个工具的 signal
+HAVE_TOOL=1
+DONT_HAVE_TOOL=0
 
+# ======== 定义函数区 ========
 # 输出警告信息
 warn() {
   echo -e "${tty_yellow}警告：$1${tty_plain}"
@@ -79,10 +88,11 @@ success_arrow() {
 have_sudo_access() {
   if [[ ! -x /usr/bin/sudo ]]
   then
+    # 如果没有 sudo 这个程序则直接返回失败
     return 1
   fi
   
-  if [[ -z "${HAVE_SUDO_ACCESS}" ]]
+  if [[ -z "${HAVE_SUDO_ACCESS-}" ]]
   then
     sudo -v && sudo -l mkdir &>/dev/null
   fi
@@ -95,31 +105,6 @@ have_sudo_access() {
 
   return "${HAVE_SUDO_ACCESS}"
 }
-
-# 检测是否为 sudo 执行
-if [ -z "${BASH_VERSION}" ]
-then
-  abort "当前 shell 程序不是 bash，请使用 bash 执行"
-fi
-
-# 检测是否为 ubuntu 系统
-if ! grep ID= /etc/os-release | grep -qi ubuntu &>/dev/null
-then
-  abort "当前系统非 Ubuntu，请使用 Ubuntu 运行此安装脚本"
-fi
-
-# 检测系统架构
-UNAME_MACHINE=$(uname -m)
-if [[ "${UNAME_MACHINE}" != "${AMD64}" ]] && [[ "${UNAME_MACHINE}" != "${ARM64}" ]]
-then
-  abort "此脚本仅支持 amd64/x86_64 和 arm 64 架构系统"
-fi
-
-# 如果运行前没有 sudo 权限则退出后使 sudo 时间戳失效
-if [[ -x /usr/bin/sudo ]] && ! sudo -n -v 2>/dev/null
-then
-  trap '/usr/bin/sudo -k' EXIT
-fi
 
 # 执行指令
 execute() {
@@ -134,12 +119,15 @@ execute() {
 execute_sudo() {
   if have_sudo_access
   then
+    # 有 sudo 程序则使用 sudo 执行
     execute "sudo" "$@"
   else
+    # 没有 sudo 程序则直接执行命令
     execute "$@"
   fi
 }
 
+# 修改 apt 源
 change_apt_source() {
   if [[ "${UNAME_MACHINE}" == "${AMD64}" ]]
   then
@@ -151,9 +139,6 @@ change_apt_source() {
     execute_sudo sed -i "s@http://ports.ubuntu.com@$1://mirrors.tuna.tsinghua.edu.cn@g" /etc/apt/sources.list
   fi
 }
-
-HAVE_TOOL=1
-DONT_HAVE_TOOL=0
 
 # 是否安装了某个包
 # 已安装则返回 1
@@ -178,7 +163,37 @@ install_pkg() {
   fi
 }
 
+# ======== 脚本执行区 ========
 unset HAVE_SUDO_ACCESS
+
+arrow "开始检查系统环境"
+# 检测是否为 bash 执行
+if [ -z "${BASH_VERSION}" ]
+then
+  abort "当前 shell 程序不是 bash，请使用 bash 执行"
+fi
+success_arrow "通过 shell 检查"
+
+# 检测是否为 ubuntu 系统
+if ! grep "ID=" "/etc/os-release" | grep -qi "ubuntu" &>/dev/null
+then
+  abort "当前系统非 Ubuntu，请使用 Ubuntu 运行此安装脚本"
+fi
+success_arrow "通过系统检查"
+
+# 检测系统架构
+UNAME_MACHINE=$(uname -m)
+if [[ "${UNAME_MACHINE}" != "${AMD64}" ]] && [[ "${UNAME_MACHINE}" != "${ARM64}" ]]
+then
+  abort "此脚本仅支持 amd64/x86_64 和 arm 64 架构系统"
+fi
+success_arrow "通过架构检查"
+
+# 如果运行前没有 sudo 权限则退出后使 sudo 时间戳失效
+if [[ -x /usr/bin/sudo ]] && ! sudo -n -v 2>/dev/null
+then
+  trap '/usr/bin/sudo -k' EXIT
+fi
 
 have_sudo_access
 
@@ -191,15 +206,17 @@ arrow 替换 apt 源
 if [[ "$(have_tool ca-certificates)" == "${HAVE_TOOL}" ]]
 then
   # 如果已经装上了 ca-certificates
-  echo "当前已安装 ca-certificates"
+  success_arrow "当前已安装 ca-certificates"
   if ! grep https://mirrors.tuna.tsinghua.edu.cn /etc/apt/sources.list &>/dev/null
   then
     # 如果 sources.list 中没有替换源
     change_apt_source "https"
+    success_arrow "替换清华 https 源成功"
+  else
+    success_arrow "当前已经替换过清华 https 源"
   fi
 else
   # 如果没装 ca-certifacates
-  echo "当前未安装 ca-certificates"
   # 修改为 http 的源
   change_apt_source "http"
   # 更新软件包列表
