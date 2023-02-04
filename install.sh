@@ -336,4 +336,5 @@ else
   success_arrow "已经安装过 pnpm"
 fi
 
-execute 'zsh && source "${ZSH_RC}" && source "${USER_SHELL_ENV_FILE}"'
+# execute 'zsh && source "${ZSH_RC}" && source "${USER_SHELL_ENV_FILE}"'
+echo -e "${tty_green}======== 安装完成，请重启 shell 以应用 zsh 及其他改动 ========"
