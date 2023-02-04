@@ -274,7 +274,7 @@ export NVM_DIR="${HOME}/.nvm"
 if ! nvm -v &>/dev/null;
 then
   # 如果未安装 nvm 则安装 curl
-  execute curl -o- "${NVM_REPO}" | bash
+  execute 'curl -o- "${NVM_REPO}" | bash'
   # 替换官方 node 源为淘宝源
   execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
   . "${NVM_DIR}/nvm.sh"
