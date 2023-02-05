@@ -279,8 +279,16 @@ fi
 
 arrow 安装 zsh "&&" oh-my-zsh
 install_pkg "zsh"
-execute 'echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"'
+if [[ ! -d "${HOME}/.oh-my-zsh" ]]
+then
+  deep_arrow "安装 oh-my-zsh"
+  execute 'echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"'
+  success_arrow "安装 oh-my-zsh 成功"
+else
+  success_arrow "已安装过 oh-my-zsh"
+fi
 execute_sudo usermod -s /bin/zsh "${USER}"
+success_arrow "修改默认 shell 为 zsh 成功"
 
 arrow 安装 nvm "&&" node
 export NVM_DIR="${HOME}/.nvm"
