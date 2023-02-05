@@ -41,13 +41,13 @@ It contains features following:
 
 ### Prerequisites
 
-- Ubuntu ( temporarily )
+- a just installed Ubuntu ( temporarily ) or already in used
 - amd64/x84_64 or aarch64(arm64)
 - bash
 
 ### Installation
 
-If you have curl or wget, you can run command following.
+If your OS has installed curl or wget ( it usually has installed curl), you can run one of commands following.
 
 ```shell
 curl -fsSL https://raw.githubusercontent.com/yuzheng14/frontend-dev-env-setup/main/install.sh | bash
