@@ -17,12 +17,13 @@ tty_plain="\033[0m"
 # 定义 x86_64 和 arm64 系统架构的常量
 readonly AMD64="x86_64"
 readonly ARM64="aarch64"
+readonly USER_SHELL_ENV_FILE="${HOME}/.profile"
 
 # 安装 oh-my-zsh 和 nvm 的安装脚本地址
 OH_MY_ZSH_REPO="https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh"
 NVM_REPO="https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh"
 # zshrc 的路径
-ZSH_RC="${HOME}/.zshrc"
+readonly ZSH_RC="${HOME}/.zshrc"
 
 # 多行字符串
 # 设置 nvm 的环境变量
@@ -56,8 +57,8 @@ load-nvmrc
 EOF
 )"
 # 是否有某个工具的 signal
-HAVE_TOOL=1
-DONT_HAVE_TOOL=0
+readonly HAVE_TOOL=1
+readonly DONT_HAVE_TOOL=0
 
 # ======== 定义函数区 ========
 # 输出警告信息
@@ -205,6 +206,7 @@ have_sudo_access
 
 if [[ -z "${USER}" ]]
 then
+  deep_arrow "获取并设置用户名"
   USER="$(id -un)"
 fi
 
@@ -215,6 +217,7 @@ then
   success_arrow "当前已安装 ca-certificates"
   if ! grep https://mirrors.tuna.tsinghua.edu.cn /etc/apt/sources.list &>/dev/null
   then
+    deep_arrow "替换清华 https 源"
     # 如果 sources.list 中没有替换源
     change_apt_source "https"
     success_arrow "替换清华 https 源成功"
@@ -224,26 +227,29 @@ then
 else
   # 如果没装 ca-certifacates
   # 修改为 http 的源
+  deep_arrow "替换清华 http 源"
   change_apt_source "http"
   # 更新软件包列表
   execute_sudo "apt" "update"
   # 安装 ca-certificates
-  execute_sudo "apt" "install" "-y" "ca-certificates"
+  install_pkg "ca-certificates"
+  deep_arrow "替换清华 https 源"
   # 替换为 https 源
   execute_sudo "sed" "-i" "s@http@https@g" "/etc/apt/sources.list"
 fi
 execute_sudo "apt" "update"
 
 arrow 配置中文
-USER_SHELL_ENV_FILE="${HOME}/.profile"
 install_pkg "language-pack-zh-hans"
 if ! locale -a | grep "zh_CN.utf8" &>/dev/null
 then
+  deep_arrow "生成 语言包"
   # 如果没有生成 zh_CN.utf8 的语言包
   execute_sudo locale-gen zh_CN.UTF-8
 fi
 if ! grep "export LANG=zh_CN.UTF-8" "${USER_SHELL_ENV_FILE}"&>/dev/null
 then
+  deep_arrow "设置终端为中文"
   # 如果 ~/.profile 中没有设定语言则设定语言
   execute_sudo 'echo -e "\n export LANG=zh_CN.UTF-8" >> "${USER_SHELL_ENV_FILE}"'
   execute source "${USER_SHELL_ENV_FILE}"
@@ -251,6 +257,7 @@ fi
 
 arrow 安装并配置 git
 install_pkg "git"
+deep_arrow "配置 git"
 execute 'git config --global alias.cam "commit -a -m"'
 execute 'git config --global alias.cm "commit -m"'
 execute 'git config --global alias.pure "pull --rebase"'
@@ -262,6 +269,7 @@ arrow 安装 curl wget 并决定地址
 install_pkg "curl"
 install_pkg "wget"
 
+deep_arrow "开始检测能否连接 github"
 if ! curl -fssL --connect-timeout 10 https://github.com &>/dev/null
 then
   warn "当前无法访问 github，将尝试使用国内镜像安装 oh-my-zsh 和 nvm"
@@ -271,8 +279,8 @@ fi
 
 arrow 安装 zsh "&&" oh-my-zsh
 install_pkg "zsh"
-execute echo -e "y\n" | sh -c "$(curl --connect-timeout 10 -fsSL ${OH_MY_ZSH_REPO})"
-execute_sudo usermod -s /bin/zsh ${USER}
+execute 'echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"'
+execute_sudo usermod -s /bin/zsh "${USER}"
 
 arrow 安装 nvm "&&" node
 export NVM_DIR="${HOME}/.nvm"
@@ -305,12 +313,12 @@ then
 else
   success_arrow "nvm 钩子已写入 zsh rc"
 fi
-# execute zsh source "${ZSH_RC}"
 
 arrow 安装 nrm，设定默认地址为淘宝镜像源
 if ! nrm -v &>/dev/null
 then
   npm install -g nrm --registry=https://registry.npmmirror.com/
+  success_arrow "安装 nrm 成功"
 else 
   success_arrow "已安装过 nrm"
 fi
@@ -324,6 +332,7 @@ then
   execute_sudo 'rm -f /usr/bin/python'
 fi
 execute_sudo ln -s /usr/bin/python2.7 /usr/bin/python
+success_arrow "设置 python 2.7 软链成功"
 
 arrow 安装其他常用软件
 install_pkg "vim"
@@ -331,6 +340,7 @@ if ! npm list -g | grep -q yarn
 then
   deep_arrow "安装 yarn"
   execute "npm" "install" "-g" "yarn"
+  success_arrow "安装 yarn 成功"
 else
   success_arrow "已经安装过 yarn"
 fi
@@ -338,9 +348,9 @@ if ! npm list -g | grep -q pnpm
 then
   deep_arrow "安装 pnpm"
   execute "npm" "install" "-g" "pnpm"
+  success_arrow "安装 pnpm 成功"
 else
   success_arrow "已经安装过 pnpm"
 fi
 
-# execute 'zsh && source "${ZSH_RC}" && source "${USER_SHELL_ENV_FILE}"'
 echo -e "${tty_green}======== 安装完成，请重启 shell 以应用 zsh 及其他改动 ========"
