@@ -94,6 +94,11 @@ have_sudo_access() {
   
   if [[ -z "${HAVE_SUDO_ACCESS-}" ]]
   then
+    if ! sudo -n -v &>/dev/null
+    then
+      # 提示输入 sudo 密码
+      echo -n "即将获取 sudo 权限，请配合提示输入 sudo 密码"
+    fi
     sudo -v && sudo -l mkdir &>/dev/null
   fi
   HAVE_SUDO_ACCESS="$?"
