@@ -361,4 +361,4 @@ else
   success_arrow "已经安装过 pnpm"
 fi
 
-echo -e "${tty_green}======== 安装完成，请重启 shell 以应用 zsh 及其他改动 ========"
+echo -e "${tty_green}======== 安装完成，请重启 shell 以应用 zsh 及其他改动 ========${tty_plain}"
