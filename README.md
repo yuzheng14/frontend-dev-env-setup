@@ -2,7 +2,7 @@
 
 English | [简体中文](https://github.com/yuzheng14/ubuntu-frontend-setup/blob/main/README.zh_CN.md)
 
-`frontend dev env setup` aims to provide a conveniently way to configure a frontend development environment from a just installed Linux (temporarily Ubuntu only) (Maybe MacOS could perform perfectly too, but I didn't test it. If you did it, please inform me.) from scratch.
+`frontend dev env setup` aims to provide a conveniently way to configure a frontend development environment from a just installed Linux (temporarily Ubuntu only) from scratch.
 
 It contains features following:
 
@@ -68,3 +68,4 @@ bash install.sh
 - [ ] i18n support
 - [ ] choosable prompt support
 - [ ] more accurate oh-my-zsh detection
+- [ ] Multiple OS support ( macOS, centOS ... )
