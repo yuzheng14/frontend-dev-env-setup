@@ -192,6 +192,7 @@ success_arrow "通过架构检查"
 # 如果运行前没有 sudo 权限则退出后使 sudo 时间戳失效
 if [[ -x /usr/bin/sudo ]] && ! sudo -n -v 2>/dev/null
 then
+  warn "当前没有 sudo 权限，稍后将获取 sudo 权限，并将在退出后删除 sudo 时间戳"
   trap '/usr/bin/sudo -k' EXIT
 fi
 
