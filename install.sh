@@ -270,7 +270,7 @@ install_pkg "curl"
 install_pkg "wget"
 
 deep_arrow "开始检测能否连接 github"
-if ! curl -fssL --connect-timeout 10 https://github.com &>/dev/null
+if ! curl -fssL --connect-timeout 10 --retry 3 "${OH_MY_ZSH_REPO}" &>/dev/null
 then
   warn "当前无法访问 github，将尝试使用国内镜像安装 oh-my-zsh 和 nvm"
   OH_MY_ZSH_REPO="https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh"
