@@ -282,8 +282,13 @@ install_pkg "zsh"
 if [[ ! -d "${HOME}/.oh-my-zsh" ]]
 then
   deep_arrow "安装 oh-my-zsh"
-  execute 'echo -e "y\n" | sh -c "$(curl -fsSL ${OH_MY_ZSH_REPO})"'
-  success_arrow "安装 oh-my-zsh 成功"
+  execute 'echo -e "y\n" | sh -c "$(curl -fsSL --connect-timeout 10 --retry 3 ${OH_MY_ZSH_REPO})"'
+  if [[ -d "${HOME}/.oh-my-zsh" ]]
+  then
+    success_arrow "安装 oh-my-zsh 成功"
+  else
+    warn "安装 oh-my-zsh 失败，请检查网络后重试"
+  fi
 else
   success_arrow "已安装过 oh-my-zsh"
 fi
@@ -295,12 +300,17 @@ export NVM_DIR="${HOME}/.nvm"
 [[ -s "${NVM_DIR}/nvm.sh" ]] && . "${NVM_DIR}/nvm.sh"
 if ! nvm -v &>/dev/null;
 then
-  # 如果未安装 nvm 则安装 curl
-  execute 'curl -o- "${NVM_REPO}" | bash'
+  # 如果未安装 nvm 则安装 nvm
+  execute 'curl -o- --connect-timeout 10 --retry 3 "${NVM_REPO}" | bash'
   # 替换官方 node 源为淘宝源
-  execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" ~/.nvm/nvm.sh
-  . "${NVM_DIR}/nvm.sh"
-  success_arrow "安装 nvm@$(nvm -v) 成功"
+  execute sed -i "s@https://nodejs.org/dist@https://npmmirror.com/mirrors/node/@g" "${NVM_DIR}/nvm.sh"
+  if [[ -s "${NVM_DIR}/nvm.sh" ]]
+  then
+    . "${NVM_DIR}/nvm.sh"
+    success_arrow "安装 nvm@$(nvm -v) 成功"
+  else
+    warn "nvm 安装失败，请检查网络后重试"
+  fi
 else
   success_arrow "当前已安装 nvm@$(nvm -v)"
 fi
