@@ -117,7 +117,7 @@ execute() {
   deep_arrow "执行指令" "$*"
   if ! eval "$*"
   then
-    abort "执行指令 $*git 失败"
+    abort "执行指令 $* 失败"
   fi
 }
 
@@ -270,11 +270,14 @@ install_pkg "curl"
 install_pkg "wget"
 
 deep_arrow "开始检测能否连接 github"
-if ! curl -fssL --connect-timeout 10 --retry 3 "${OH_MY_ZSH_REPO}" &>/dev/null
+if ! curl -fsSL --connect-timeout 0.5 "${OH_MY_ZSH_REPO}" &>/dev/null
 then
   warn "当前无法访问 github，将尝试使用国内镜像安装 oh-my-zsh 和 nvm"
   OH_MY_ZSH_REPO="https://gitee.com/abeir/oh-my-zsh/raw/master/tools/install.sh"
   NVM_REPO="https://gitee.com/yanlong-li/nvm-sh-nvm/raw/v0.39.2-gitee/install.sh"
+  success_arrow "使用国内镜像源"
+else
+  success_arrow "使用 GitHub 源"
 fi
 
 arrow 安装 zsh "&&" oh-my-zsh
